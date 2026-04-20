@@ -1,0 +1,9 @@
+{
+  "name": "manova-gift-card",
+  "version": "1.0.0",
+  "description": "Manova Beauty Center - Tarjeta de Regalo Digital",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.0",
+    "node-fetch": "^2.7.0"
+  }
+}
