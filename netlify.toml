@@ -2,16 +2,13 @@
   publish = "public"
   functions = "netlify/functions"
 
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SENDGRID_FROM_EMAIL,MP_ACCESS_TOKEN,SENDGRID_API_KEY,SHEETS_WEBHOOK_URL"
+
 [functions]
   node_bundler = "esbuild"
-
-[build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "SENDGRID_FROM_EMAIL"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
-[build.environment]
-  SECRETS_SCAN_OMIT_KEYS = "MP_ACCESS_TOKEN,SENDGRID_API_KEY"
