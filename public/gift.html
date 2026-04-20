@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarjeta de Regalo – Manova Beauty Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&family=Noto+Serif:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--espresso:#6A331E;--offwhite:#E7E4DB;--black:#040015;--latte:#A3794A;--olive:#5C5A37;--bg:#F5EDE0}
+body{background:var(--bg);font-family:'Questrial',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 90% 5%,rgba(163,121,74,.15) 0%,transparent 65%),radial-gradient(ellipse 50% 50% at 5% 90%,rgba(106,51,30,.09) 0%,transparent 60%);pointer-events:none;z-index:0}
+.bg-petals{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.petal{position:absolute;opacity:0;animation:floatPetal linear infinite}
+@keyframes floatPetal{0%{transform:translateY(110vh) rotate(0deg);opacity:0}8%{opacity:.5}92%{opacity:.25}100%{transform:translateY(-10vh) rotate(400deg);opacity:0}}
+
+/* INTRO */
+#giftScreen{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);transition:opacity .6s ease}
+#giftScreen.hiding{opacity:0;pointer-events:none}
+.gift-brand{position:absolute;top:2rem;font-family:'Noto Serif',serif;font-style:italic;font-size:1.1rem;color:var(--espresso);opacity:.5;letter-spacing:.08em}
+.gift-scene{position:relative;width:200px;height:200px;cursor:pointer;user-select:none}
+.gift-lid{position:absolute;top:0;left:-8px;width:216px;height:52px;background:linear-gradient(135deg,var(--espresso) 0%,#8B4422 100%);border-radius:10px 10px 4px 4px;box-shadow:0 4px 16px rgba(106,51,30,.35);transform-origin:center top;transition:transform .6s cubic-bezier(.4,0,.2,1);z-index:3}
+.gift-scene.opening .gift-lid{transform:rotateX(-110deg) translateY(-20px)}
+.gift-body{position:absolute;bottom:0;left:0;width:200px;height:160px;background:linear-gradient(135deg,#A3794A 0%,#8B6040 100%);border-radius:6px 6px 12px 12px;box-shadow:0 8px 24px rgba(106,51,30,.3);overflow:hidden;z-index:1}
+.gift-body::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 60%)}
+.gift-body::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:22px;margin-left:-11px;background:var(--espresso);opacity:.5}
+.gift-lid::before{content:'';position:absolute;top:50%;left:0;right:0;height:22px;margin-top:-11px;background:rgba(255,255,255,.18)}
+.gift-lid::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:22px;margin-left:-11px;background:rgba(255,255,255,.18)}
+.gift-bow{position:absolute;top:-38px;left:50%;transform:translateX(-50%);z-index:4;transition:transform .5s cubic-bezier(.4,0,.2,1),opacity .4s ease}
+.gift-scene.opening .gift-bow{transform:translateX(-50%) translateY(-60px) scale(.5);opacity:0}
+.ribbon-v{position:absolute;left:50%;top:0;bottom:0;width:22px;margin-left:-11px;background:var(--espresso);opacity:.45;z-index:2}
+.gift-hint{margin-top:2rem;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--espresso);opacity:.55;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}
+
+/* MAIN */
+.main-content{width:100%;display:none;flex-direction:column;align-items:center;padding:1.2rem 1rem 3rem;opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;position:relative;z-index:1}
+.main-content.visible{opacity:1;transform:translateY(0);display:flex}
+.content-wrap{width:100%;max-width:480px}
+
+.countdown-bar{display:flex;align-items:center;gap:.6rem;background:rgba(106,51,30,.07);border:1px solid rgba(106,51,30,.15);border-radius:30px;padding:.45rem 1rem;margin-bottom:1.2rem}
+.cd-label{font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--espresso);opacity:.75}
+.cd-time{font-family:'Noto Serif',serif;font-size:.95rem;color:var(--espresso);margin-left:auto}
+
+/* CARD */
+.card-preview{width:100%;margin-bottom:1.4rem}
+.card-wrapper{position:relative;width:100%;cursor:pointer}
+.card-flipper{position:relative;width:100%;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.45,0,.55,1);perspective:1200px}
+.card-flipper.flipped{transform:rotateY(180deg)}
+.card-face{width:100%;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.card-front{position:relative;background:linear-gradient(148deg,var(--offwhite) 0%,#EDE8DC 58%,#E0D9CC 100%);padding:2rem 1.8rem 1.8rem;overflow:hidden;box-shadow:0 20px 48px rgba(106,51,30,.17),0 5px 16px rgba(106,51,30,.09),inset 0 1px 0 rgba(255,255,255,.75)}
+.card-front::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(163,121,74,.11) 0%,transparent 65%)}
+.card-front::after{content:'';position:absolute;bottom:-40px;left:-40px;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(106,51,30,.07) 0%,transparent 60%)}
+.flowers-tr{position:absolute;top:0;right:0;pointer-events:none}
+.flowers-bl{position:absolute;bottom:0;left:0;pointer-events:none}
+.front-logo{position:relative;z-index:2;margin-bottom:.3rem}
+.front-logo img{height:38px;width:auto}
+.mothers-badge{position:relative;z-index:2;display:inline-flex;align-items:center;gap:.4rem;background:rgba(106,51,30,.07);border:1px solid rgba(106,51,30,.16);border-radius:30px;padding:.22rem .7rem;margin-bottom:1.1rem;margin-top:.4rem}
+.badge-text{font-size:.53rem;letter-spacing:.22em;text-transform:uppercase;color:var(--espresso)}
+.heart{font-size:.6rem;color:var(--espresso);animation:hb 1.6s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}60%{transform:scale(1.1)}}
+.pack-section{position:relative;z-index:2;margin-bottom:1.1rem}
+.pack-label{font-size:.5rem;letter-spacing:.26em;text-transform:uppercase;color:var(--latte);margin-bottom:.15rem}
+.pack-name-display{font-family:'Noto Serif',serif;font-weight:300;font-size:1.5rem;color:var(--espresso);font-style:italic;line-height:1.2}
+.pack-sub-display{font-size:.65rem;color:var(--latte);margin-top:.2rem;line-height:1.4}
+.divider{position:relative;z-index:2;display:flex;align-items:center;gap:.6rem;margin-bottom:1.1rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(106,51,30,.18),transparent)}
+.recipient-row{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:flex-end}
+.for-lbl{font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--latte);margin-bottom:.15rem}
+.for-name{font-family:'Noto Serif',serif;font-style:italic;font-size:1.2rem;font-weight:300;color:var(--espresso)}
+.flip-row{position:relative;z-index:2;display:flex;justify-content:flex-end;margin-top:.8rem}
+.flip-hint{font-size:.48rem;letter-spacing:.13em;text-transform:uppercase;color:rgba(106,51,30,.38);display:flex;align-items:center;gap:.28rem;user-select:none}
+.flip-arrow{animation:nudge 2s ease-in-out infinite;display:inline-block}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+.card-back{position:absolute;inset:0;transform:rotateY(180deg);background:linear-gradient(148deg,#FAF8F3 0%,var(--offwhite) 100%);padding:1.8rem 1.8rem 1.6rem;border:1px solid rgba(163,121,74,.18);box-shadow:0 20px 48px rgba(106,51,30,.13);overflow:hidden;display:flex;flex-direction:column;gap:1rem}
+.back-header{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.back-logo{height:24px;width:auto;opacity:.5}
+.back-flip-hint{font-size:.48rem;letter-spacing:.13em;text-transform:uppercase;color:rgba(106,51,30,.38);display:flex;align-items:center;gap:.28rem;user-select:none;cursor:pointer}
+.back-message{position:relative;z-index:1}
+.back-msg-lbl{font-size:.48rem;letter-spacing:.22em;text-transform:uppercase;color:var(--espresso);opacity:.6;margin-bottom:.35rem}
+.back-msg-text{font-family:'Noto Serif',serif;font-style:italic;font-size:.92rem;line-height:1.72;color:var(--black);padding:.6rem .8rem;border-left:2px solid var(--latte);background:rgba(255,255,255,.58);border-radius:0 8px 8px 0;white-space:pre-wrap;word-break:break-word}
+.back-code-block{background:white;border-radius:12px;border:1px solid rgba(163,121,74,.2);padding:.75rem 1rem;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.code-lbl{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--espresso);opacity:.6;margin-bottom:.15rem}
+.code-val{font-family:'Noto Serif',serif;font-size:1.2rem;font-weight:600;color:var(--black);letter-spacing:.08em}
+.validity{font-size:.5rem;color:var(--espresso);opacity:.55;text-align:right;line-height:1.5}
+.back-footer{font-size:.5rem;color:var(--black);opacity:.3;text-align:center;line-height:1.7;letter-spacing:.06em;position:relative;z-index:1}
+
+/* PROGRESS */
+.progress-bar{display:flex;gap:.4rem;margin-bottom:1.2rem}
+.prog-step{height:3px;flex:1;border-radius:3px;background:rgba(106,51,30,.15);transition:background .3s}
+.prog-step.done{background:var(--espresso)}
+.step-title{font-family:'Noto Serif',serif;font-size:1.2rem;font-weight:300;color:var(--black);margin-bottom:.2rem}
+.step-title span{color:var(--espresso);font-style:italic}
+.step-sub{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--latte);opacity:.7;margin-bottom:1.2rem}
+
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:1.2rem;background:white;border-radius:12px;padding:.3rem;border:1px solid rgba(163,121,74,.18)}
+.tab-btn{flex:1;padding:.6rem .5rem;border:none;border-radius:9px;background:transparent;font-family:'Questrial',sans-serif;font-size:.72rem;color:var(--latte);cursor:pointer;transition:all .2s;text-align:center;letter-spacing:.05em}
+.tab-btn.active{background:var(--espresso);color:var(--offwhite)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* PACKS */
+.pack-card{background:white;border-radius:14px;border:2px solid transparent;padding:1rem 1.2rem;margin-bottom:.7rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.pack-card:hover{border-color:rgba(163,121,74,.4);box-shadow:0 6px 20px rgba(106,51,30,.09);transform:translateY(-1px)}
+.pack-card.selected{border-color:var(--espresso);background:linear-gradient(135deg,#FAF6F0 0%,white 100%)}
+.pack-badge{position:absolute;top:.7rem;right:.7rem;font-size:.48rem;letter-spacing:.15em;text-transform:uppercase;background:var(--espresso);color:var(--offwhite);padding:.18rem .5rem;border-radius:20px}
+.pack-name{font-family:'Noto Serif',serif;font-size:1rem;font-style:italic;color:var(--espresso);margin-bottom:.2rem}
+.pack-services{font-size:.68rem;color:var(--latte);line-height:1.45;margin-bottom:.4rem}
+.pack-duration{font-size:.57rem;letter-spacing:.12em;text-transform:uppercase;color:var(--olive);opacity:.7}
+.pack-price{font-family:'Noto Serif',serif;font-size:1.35rem;font-weight:300;color:var(--espresso);margin-top:.4rem}
+.pack-price span{font-size:.85rem;color:var(--latte);font-style:italic}
+
+/* CUSTOM */
+.custom-toggle{display:flex;align-items:center;gap:.5rem;margin-top:.3rem;cursor:pointer;color:var(--latte);font-size:.68rem;letter-spacing:.1em;opacity:.8;border:none;background:none;font-family:'Questrial',sans-serif;padding:.3rem 0}
+.custom-panel{display:none;background:white;border-radius:14px;border:2px solid transparent;padding:1rem 1.2rem;margin-top:.5rem;transition:all .2s}
+.custom-panel.open{display:block;border-color:rgba(163,121,74,.3)}
+.custom-panel.selected{border-color:var(--espresso)}
+.custom-label{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--espresso);opacity:.7;margin-bottom:.6rem;display:block}
+.custom-amounts{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.7rem}
+.custom-amt-btn{background:var(--bg);border:1px solid rgba(163,121,74,.22);border-radius:8px;padding:.4rem .7rem;font-family:'Questrial',sans-serif;font-size:.8rem;color:var(--black);cursor:pointer;transition:all .2s}
+.custom-amt-btn.active{background:var(--espresso);color:var(--offwhite);border-color:var(--espresso)}
+.custom-input{background:var(--bg);border:1px solid rgba(163,121,74,.22);border-radius:8px;padding:.5rem .7rem;font-family:'Noto Serif',serif;font-size:1rem;color:var(--espresso);width:100%;outline:none}
+.custom-input:focus{border-color:var(--espresso)}
+
+/* CLUB */
+.club-hero{background:linear-gradient(135deg,var(--espresso) 0%,#3d1a0a 100%);border-radius:16px;padding:1.3rem 1.4rem;margin-bottom:1rem;position:relative;overflow:hidden}
+.club-title{font-family:'Noto Serif',serif;font-style:italic;font-size:1.4rem;color:var(--offwhite);margin-bottom:.2rem;position:relative;z-index:1}
+.club-subtitle{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:#C9A651;opacity:.9;margin-bottom:.8rem;position:relative;z-index:1}
+.club-includes{position:relative;z-index:1}
+.club-includes p{font-size:.7rem;color:rgba(231,228,219,.85);line-height:1.6;margin-bottom:.2rem}
+.club-includes p span{color:#C9A651;font-weight:500}
+.club-price-tag{display:flex;align-items:baseline;gap:.3rem;margin-top:.8rem;position:relative;z-index:1}
+.club-price-tag .price{font-family:'Noto Serif',serif;font-size:1.8rem;font-weight:300;color:var(--offwhite)}
+.club-price-tag .per{font-size:.65rem;color:#C9A651;letter-spacing:.1em}
+.club-price-tag .real{font-size:.6rem;color:rgba(231,228,219,.5);text-decoration:line-through;margin-left:.4rem}
+.months-label{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--espresso);opacity:.75;margin-bottom:.5rem;display:block}
+.months-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:1rem}
+.month-btn{background:white;border:2px solid rgba(163,121,74,.2);border-radius:10px;padding:.6rem .3rem;text-align:center;cursor:pointer;transition:all .2s}
+.month-btn:hover{border-color:var(--espresso);transform:translateY(-1px)}
+.month-btn.active{border-color:var(--espresso);background:linear-gradient(135deg,#FAF6F0,white)}
+.month-btn .m-num{font-family:'Noto Serif',serif;font-size:1.3rem;font-weight:300;color:var(--espresso);line-height:1}
+.month-btn .m-label{font-size:.52rem;color:var(--latte);letter-spacing:.08em}
+.month-btn .m-price{font-size:.62rem;color:var(--espresso);font-weight:500;margin-top:.2rem}
+.month-btn .m-gift{font-size:.55rem;color:#C9A651;margin-top:.15rem}
+.club-benefit{background:white;border-radius:10px;border:1px solid rgba(201,166,81,.25);padding:.7rem .9rem;margin-bottom:.5rem;display:none}
+.club-benefit.show{display:block}
+.club-benefit .cb-title{font-size:.52rem;letter-spacing:.15em;text-transform:uppercase;color:#C9A651;margin-bottom:.3rem}
+.club-benefit .cb-text{font-size:.7rem;color:var(--espresso);line-height:1.5}
+
+/* FORM */
+.field-label{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--espresso);opacity:.75;margin-bottom:.24rem;display:block}
+.field{display:flex;flex-direction:column;margin-bottom:.75rem}
+.field input,.field textarea,.field select{background:white;border:1px solid rgba(163,121,74,.22);border-radius:8px;padding:.56rem .75rem;font-family:'Questrial',sans-serif;font-size:.88rem;color:var(--black);outline:none;transition:border-color .2s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--espresso)}
+.field textarea{resize:none;height:65px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.delivery-opts{display:flex;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+.delivery-btn{flex:1;min-width:90px;background:white;border:1px solid rgba(163,121,74,.22);border-radius:10px;padding:.6rem .4rem;font-family:'Questrial',sans-serif;font-size:.66rem;color:var(--black);cursor:pointer;transition:all .2s;text-align:center}
+.delivery-btn.active{background:var(--espresso);color:var(--offwhite);border-color:var(--espresso)}
+.delivery-btn .d-icon{font-size:1rem;display:block;margin-bottom:.12rem}
+.schedule-box{background:white;border-radius:12px;border:1px solid rgba(163,121,74,.2);padding:.9rem 1rem;margin-bottom:.75rem}
+.schedule-opts{display:flex;gap:.5rem;margin-bottom:.6rem}
+.schedule-btn{flex:1;background:transparent;border:1px solid rgba(163,121,74,.22);border-radius:8px;padding:.5rem;font-family:'Questrial',sans-serif;font-size:.68rem;color:var(--black);cursor:pointer;transition:all .2s;text-align:center;line-height:1.4}
+.schedule-btn.active{background:var(--olive);color:var(--offwhite);border-color:var(--olive)}
+.schedule-datetime{display:none}
+.schedule-datetime.show{display:block}
+
+/* ORDER */
+.order-summary{background:white;border-radius:14px;border:1px solid rgba(163,121,74,.2);padding:1.1rem 1.3rem;margin-bottom:1.1rem}
+.os-title{font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--espresso);opacity:.6;margin-bottom:.7rem}
+.os-pack{font-family:'Noto Serif',serif;font-style:italic;font-size:1rem;color:var(--espresso);margin-bottom:.25rem}
+.os-detail{font-size:.7rem;color:var(--latte);margin-bottom:.5rem;line-height:1.5}
+.os-price{font-family:'Noto Serif',serif;font-size:1.7rem;font-weight:300;color:var(--espresso)}
+.success-msg{text-align:center;margin-bottom:1.3rem;padding:.9rem;background:rgba(92,90,55,.08);border-radius:12px;border:1px solid rgba(92,90,55,.2)}
+.s-icon{font-size:1.8rem;margin-bottom:.3rem}
+.s-title{font-family:'Noto Serif',serif;font-size:1rem;font-style:italic;color:var(--olive)}
+.s-sub{font-size:.65rem;color:var(--olive);opacity:.8;margin-top:.15rem}
+.btn{flex:1;padding:.78rem;border:none;border-radius:10px;font-family:'Questrial',sans-serif;font-size:.67rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .22s}
+.btn-primary{background:var(--espresso);color:var(--offwhite)}
+.btn-primary:hover{background:var(--black)}
+.btn-secondary{background:transparent;color:var(--espresso);border:1px solid rgba(106,51,30,.25)}
+.btn-secondary:hover{background:rgba(106,51,30,.05)}
+.btn-group{display:flex;gap:.65rem;margin-top:1.2rem}
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--espresso);color:var(--offwhite);padding:.65rem 1.5rem;border-radius:30px;font-size:.63rem;letter-spacing:.12em;opacity:0;transition:all .4s cubic-bezier(.4,0,.2,1);z-index:999;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="bg-petals" id="petals"></div>
+
+<div id="giftScreen">
+  <div class="gift-brand">Manova Beauty Center</div>
+  <div class="gift-scene" id="giftScene" onclick="openGift()">
+    <div class="gift-bow">
+      <svg width="100" height="60" viewBox="0 0 100 60" fill="none">
+        <path d="M50,30 C40,10 10,5 8,20 C6,35 35,38 50,30Z" fill="#6A331E" opacity="0.9"/>
+        <path d="M50,30 C60,10 90,5 92,20 C94,35 65,38 50,30Z" fill="#6A331E" opacity="0.9"/>
+        <ellipse cx="50" cy="30" rx="9" ry="8" fill="#8B4422"/>
+        <ellipse cx="50" cy="30" rx="5" ry="4.5" fill="#A3794A"/>
+        <path d="M44,34 Q38,46 35,55" stroke="#6A331E" stroke-width="6" stroke-linecap="round" fill="none"/>
+        <path d="M56,34 Q62,46 65,55" stroke="#6A331E" stroke-width="6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="gift-lid"></div>
+    <div class="gift-body"><div class="ribbon-v"></div></div>
+  </div>
+  <div class="gift-hint">Toca para abrir ✦</div>
+</div>
+
+<div class="main-content" id="mainContent">
+<div class="content-wrap">
+
+<div class="countdown-bar" style="margin-top:.5rem">
+  <span class="cd-label">⏰ Faltan para el 10 de mayo</span>
+  <span class="cd-time" id="countdown">—</span>
+</div>
+
+<div class="card-preview">
+  <div class="card-wrapper" onclick="toggleCard()">
+    <div class="card-flipper" id="cardFlipper">
+      <div class="card-face card-front" id="cardFront">
+        <svg class="flowers-tr" width="150" height="150" viewBox="0 0 155 155" fill="none" style="opacity:.22">
+          <g transform="translate(95,55)"><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(288)"/><circle r="7" fill="#6A331E"/><circle r="3" fill="#C9A96E"/></g>
+          <g transform="translate(42,28)"><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(0)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(72)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(144)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(216)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(288)"/><circle r="4.5" fill="#A3794A"/><circle r="2" fill="#E7E4DB"/></g>
+        </svg>
+        <svg class="flowers-bl" width="110" height="110" viewBox="0 0 115 115" fill="none" style="opacity:.15">
+          <g transform="translate(55,65)"><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(288)"/><circle r="6" fill="#6A331E"/><circle r="2.5" fill="#C9A96E"/></g>
+        </svg>
+        <div class="front-logo"><img src="/logo.png" alt="Manova Beauty Center"></div>
+        <div class="mothers-badge"><span class="heart">♡</span><span class="badge-text">Día de las Madres · 2025</span><span class="heart">♡</span></div>
+        <div class="pack-section">
+          <div class="pack-label">Tu regalo</div>
+          <div class="pack-name-display" id="cardPackDisplay">Elige un pack 🌸</div>
+          <div class="pack-sub-display" id="cardPackSub"></div>
+        </div>
+        <div class="divider">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex-shrink:0"><g transform="translate(9,9)"><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(288)"/><circle r="3" fill="#6A331E"/><circle r="1.2" fill="#C9A96E"/></g></svg>
+        </div>
+        <div class="recipient-row">
+          <div><div class="for-lbl">Para</div><div class="for-name" id="displayName">Tu mamá 🌸</div></div>
+          <div style="text-align:right"><div class="for-lbl" style="text-align:right">De parte de</div><div class="for-name" id="displayFrom" style="font-size:1rem;color:var(--latte)">Con amor</div></div>
+        </div>
+        <div class="flip-row"><div class="flip-hint"><span>Ver reverso</span><span class="flip-arrow">›</span></div></div>
+      </div>
+      <div class="card-face card-back">
+        <div class="back-header">
+          <img class="back-logo" src="/logo.png" alt="Manova">
+          <div class="back-flip-hint" onclick="event.stopPropagation();toggleCard()"><span style="display:inline-block;transform:scaleX(-1)">›</span><span>Ver frente</span></div>
+        </div>
+        <div class="back-message">
+          <div class="back-msg-lbl">Mensaje especial</div>
+          <div class="back-msg-text" id="displayMessage">Con todo el carino del mundo. 🌸</div>
+        </div>
+        <div class="back-code-block">
+          <div><div class="code-lbl">Código</div><div class="code-val" id="displayCode">MNV-——</div></div>
+          <div class="validity" id="displayValidity">Válida hasta<br>—</div>
+        </div>
+        <div class="back-footer">Canjeable en Manova Beauty Center · Merida, Yucatan<br>No reembolsable · No transferible</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar" id="progressBar">
+  <div class="prog-step done" id="ps1"></div>
+  <div class="prog-step" id="ps2"></div>
+  <div class="prog-step" id="ps3"></div>
+</div>
+
+<!-- PASO 1 -->
+<div id="stepPacks">
+  <div class="step-title">Elige tu <span>regalo</span></div>
+  <div class="step-sub">Toca para ver la tarjeta en vivo 👆</div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('experiences')">🌸 Experiencias</button>
+    <button class="tab-btn" onclick="switchTab('club')">💎 Manova Club</button>
+  </div>
+  <div class="tab-content active" id="tabExperiences">
+    <div class="pack-card" onclick="selectPack(this,'Toque Manova',599,'Manicure Express + Pedicure Profundo · 100 min')">
+      <div class="pack-name">✦ Toque Manova</div>
+      <div class="pack-services">Manicure Express + Pedicure Profundo — limpieza profunda, sales relajantes y gel</div>
+      <div class="pack-duration">⏱ 100 min</div>
+      <div class="pack-price">$599 <span>MXN</span></div>
+    </div>
+    <div class="pack-card" onclick="selectPack(this,'Mimada',899,'Facial Hidratante + Masaje Relajante Espalda · 150 min')">
+      <div class="pack-badge">✨ Favorita</div>
+      <div class="pack-name">♡ Mimada</div>
+      <div class="pack-services">Facial Hidratante + Masaje Relajante Espalda y Cuello</div>
+      <div class="pack-duration">⏱ 150 min</div>
+      <div class="pack-price">$899 <span>MXN</span></div>
+    </div>
+    <div class="pack-card" onclick="selectPack(this,'Día de Mamá',1299,'Facial Profundo + Manicure Jelly · 165 min')">
+      <div class="pack-badge">🌸 Mas pedido</div>
+      <div class="pack-name">🌸 Día de Mamá</div>
+      <div class="pack-services">Facial Profundo + Manicure Jelly — el facial mas completo con experiencia sensorial en manos</div>
+      <div class="pack-duration">⏱ 165 min</div>
+      <div class="pack-price">$1,299 <span>MXN</span></div>
+    </div>
+    <div class="pack-card" onclick="selectPack(this,'Reina Manova',1799,'Facial Hidratante + Masaje Cuerpo Completo + Manos y Pies Express · 260 min')">
+      <div class="pack-badge">👑 Premium</div>
+      <div class="pack-name">👑 Reina Manova</div>
+      <div class="pack-services">Facial Hidratante + Masaje Cuerpo Completo + Manos y Pies Express</div>
+      <div class="pack-duration">⏱ 260 min</div>
+      <div class="pack-price">$1,799 <span>MXN</span></div>
+    </div>
+    <button class="custom-toggle" onclick="toggleCustom()">
+      <span>✦</span><span>A tu medida</span><span id="customArrow" style="transition:transform .2s">›</span>
+    </button>
+    <div class="custom-panel" id="customPanel">
+      <label class="custom-label">Elige o escribe el monto</label>
+      <div class="custom-amounts">
+        <button class="custom-amt-btn" onclick="setCustomAmount(300,this)">$300</button>
+        <button class="custom-amt-btn" onclick="setCustomAmount(500,this)">$500</button>
+        <button class="custom-amt-btn" onclick="setCustomAmount(800,this)">$800</button>
+        <button class="custom-amt-btn" onclick="setCustomAmount(1000,this)">$1,000</button>
+      </div>
+      <input type="number" class="custom-input" id="customAmountInput" placeholder="Otro monto..." min="100" oninput="setCustomAmountFree(this.value)">
+    </div>
+  </div>
+  <div class="tab-content" id="tabClub">
+    <div class="club-hero">
+      <div class="club-title">Manova Club</div>
+      <div class="club-subtitle">La suscripción de belleza & wellness de Merida</div>
+      <div class="club-includes">
+        <p>Cada mes recibe:</p>
+        <p>· <span>1 Pedicure Spa</span></p>
+        <p>· <span>2 Manicure Gel Clasico</span></p>
+        <p>· <span>1 Facial Profundo</span></p>
+      </div>
+      <div class="club-price-tag">
+        <span class="price">$1,299</span><span class="per">/MES</span><span class="real">Valor real $1,750</span>
+      </div>
+    </div>
+    <label class="months-label">Cuantos meses quieres regalar?</label>
+    <div class="months-grid">
+      <div class="month-btn" onclick="selectMonths(this,1,1299,'')"><div class="m-num">1</div><div class="m-label">mes</div><div class="m-price">$1,299</div></div>
+      <div class="month-btn" onclick="selectMonths(this,3,3897,'Masaje gratis')"><div class="m-num">3</div><div class="m-label">meses</div><div class="m-price">$3,897</div><div class="m-gift">🎁 + Masaje</div></div>
+      <div class="month-btn" onclick="selectMonths(this,6,7794,'Lash Lifting + Cejas')"><div class="m-num">6</div><div class="m-label">meses</div><div class="m-price">$7,794</div><div class="m-gift">🎁 + Lashes</div></div>
+      <div class="month-btn" onclick="selectMonths(this,12,15588,'Keratina + 1 mes gratis')"><div class="m-num">12</div><div class="m-label">meses</div><div class="m-price">$15,588</div><div class="m-gift">🎁 + Keratina</div></div>
+    </div>
+    <div class="club-benefit" id="clubBenefit">
+      <div class="cb-title" id="cbTitle">Regalo incluido</div>
+      <div class="cb-text" id="cbText">—</div>
+    </div>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-primary" id="btnNext1" onclick="goToStep(2)" style="opacity:.4;pointer-events:none">Personalizar tarjeta →</button>
+  </div>
+</div>
+
+<!-- PASO 2 -->
+<div id="stepForm" style="display:none">
+  <div class="step-title">Personaliza el <span>mensaje</span></div>
+  <div class="step-sub">Se actualiza en vivo arriba 👆</div>
+  <div class="field-row" style="margin-bottom:.75rem">
+    <div class="field"><label class="field-label">Para (mamá)</label><input type="text" id="fName" placeholder="Nombre de mamá" maxlength="30" oninput="liveUpdate()"></div>
+    <div class="field"><label class="field-label">De parte de</label><input type="text" id="fFrom" placeholder="Tu nombre" maxlength="30" oninput="liveUpdate()"></div>
+  </div>
+  <div class="field"><label class="field-label">Mensaje especial</label><textarea id="fMsg" placeholder="Escribe algo bonito para mamá..." maxlength="200" oninput="liveUpdate()"></textarea></div>
+  <div class="field">
+    <label class="field-label">Cómo enviar la tarjeta a tu mamá?</label>
+    <div class="delivery-opts">
+      <button class="delivery-btn active" id="dBoth" onclick="setDelivery('both')"><span class="d-icon">💬✉️</span>WhatsApp + Correo</button>
+      <button class="delivery-btn" id="dWhatsApp" onclick="setDelivery('whatsapp')"><span class="d-icon">💬</span>WhatsApp mamá</button>
+      <button class="delivery-btn" id="dEmail" onclick="setDelivery('email')"><span class="d-icon">✉️</span>Correo mamá</button>
+      <button class="delivery-btn" id="dSelf" onclick="setDelivery('self')"><span class="d-icon">📲</span>Solo a mi</button>
+    </div>
+  </div>
+  <div class="field" id="whatsappField"><label class="field-label">WhatsApp de mamá</label><input type="tel" id="fWhatsApp" placeholder="+52 999 000 0000"></div>
+  <div class="field" id="emailField"><label class="field-label">Correo de mamá</label><input type="email" id="fEmail" placeholder="mamá@correo.com"></div>
+  <div class="field" id="selfField" style="display:none"><label class="field-label">Tu WhatsApp o correo</label><input type="text" id="fSelf" placeholder="Tu contacto"></div>
+  <div class="schedule-box">
+    <label class="field-label" style="margin-bottom:.5rem">Cuando enviar?</label>
+    <div class="schedule-opts">
+      <button class="schedule-btn active" id="sNow" onclick="setSchedule('now')">📲 Enviar ahora<br><span style="font-size:.58rem;opacity:.7">Al completar el pago</span></button>
+      <button class="schedule-btn" id="sMay10" onclick="setSchedule('may10')">🌸 El 10 de mayo<br><span style="font-size:.58rem;opacity:.7">Día de las Madres</span></button>
+    </div>
+    <div class="schedule-datetime" id="scheduleDatetime">
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Hora de envío</label>
+        <select id="scheduleHour">
+          <option value="07:00">7:00 AM — Buenos días mamá 🌅</option>
+          <option value="10:00" selected>10:00 AM — Hora perfecta ☀️</option>
+          <option value="12:00">12:00 PM — Mediodia 🌸</option>
+          <option value="18:00">6:00 PM — Al llegar a casa 🌇</option>
+          <option value="20:00">8:00 PM — Cena especial 🕯️</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div style="background:white;border-radius:12px;border:1px solid rgba(163,121,74,.2);padding:.9rem 1rem;margin-bottom:.75rem">
+    <label class="field-label" style="margin-bottom:.5rem;display:block">Tus datos de contacto</label>
+    <p style="font-size:.62rem;color:var(--latte);margin-bottom:.6rem;line-height:1.5">Para contactarte si hay alguna duda con tu pedido 🌸</p>
+    <div class="field-row" style="margin-bottom:.6rem">
+      <div class="field"><label class="field-label">Tu nombre completo</label><input type="text" id="fBuyerName" placeholder="Nombre y apellido"></div>
+      <div class="field"><label class="field-label">Tu teléfono</label><input type="tel" id="fBuyerPhone" placeholder="+52 999 000 0000"></div>
+    </div>
+    <div class="field"><label class="field-label">Tu correo</label><input type="email" id="fBuyerEmail" placeholder="tu@correo.com"></div>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-secondary" onclick="goToStep(1)">← Atras</button>
+    <button class="btn btn-primary" onclick="validateAndPay()">Ir a pagar →</button>
+  </div>
+</div>
+
+<!-- PASO 3 -->
+<div id="stepPayment" style="display:none">
+  <div class="step-title">Confirma tu <span>pago</span></div>
+  <div class="step-sub">Pago seguro con Mercado Pago</div>
+  <div class="order-summary">
+    <div class="os-title">Resumen</div>
+    <div class="os-pack" id="osPack">—</div>
+    <div class="os-detail" id="osDetail">Para: —</div>
+    <div class="os-price" id="osPrice">$0 MXN</div>
+  </div>
+  <div style="background:white;border-radius:12px;border:1px solid rgba(163,121,74,.2);padding:1.2rem;text-align:center">
+    <p style="font-size:.72rem;color:var(--latte);margin-bottom:.8rem">Pago 100% seguro · Tarjeta · OXXO · Transferencia SPEI</p>
+    <button id="mpPayBtn" onclick="redirectToMP()" style="width:100%;background:var(--espresso);color:var(--offwhite);border:none;border-radius:10px;padding:.9rem;font-family:'Questrial',sans-serif;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer">Pagar con Mercado Pago 💳</button>
+  </div>
+  <div class="btn-group"><button class="btn btn-secondary" onclick="goToStep(2)">← Atras</button></div>
+</div>
+
+<!-- PASO 4 -->
+<div id="stepCard" style="display:none">
+  <div class="success-msg">
+    <div class="s-icon">🌸</div>
+    <div class="s-title">Pago exitoso! Tu tarjeta esta lista</div>
+    <div class="s-sub" id="successSub">La tarjeta fue enviada a mamá 💌</div>
+  </div>
+  <div class="btn-group">
+    <button class="btn btn-secondary" onclick="downloadCard()">⬇ Descargar</button>
+    <button class="btn btn-primary" onclick="shareCard()">Compartir 🌸</button>
+  </div>
+</div>
+
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const WHATSAPP_MANOVA = '529901037352';
+let selectedPack = null;
+let deliveryMethod = 'both';
+let scheduleMethod = 'now';
+let flipped = false;
+let giftCode = '';
+let activeTab = 'experiences';
+let customOpen = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+  generateGiftCode();
+  startCountdown();
+  initPetals();
+  setDelivery('both');
+});
+
+function startCountdown() {
+  function update() {
+    const now = new Date();
+    const year = now.getFullYear();
+    let target = new Date(year, 4, 10, 0, 0, 0);
+    if (now >= target) target = new Date(year+1, 4, 10, 0, 0, 0);
+    const diff = target - now;
+    if (diff <= 0) { document.getElementById('countdown').textContent = 'Hoy es el dia! 🌸'; return; }
+    const d = Math.floor(diff/86400000);
+    const h = Math.floor((diff%86400000)/3600000);
+    const m = Math.floor((diff%3600000)/60000);
+    document.getElementById('countdown').textContent = d>0 ? d+'d '+h+'h '+m+'m' : h+'h '+m+'m';
+  }
+  update();
+  setInterval(update, 30000);
+}
+
+function initPetals() {
+  const bp = document.getElementById('petals');
+  const pc = ['#A3794A','#6A331E','#5C5A37','#C4A882','#8B5E3C'];
+  for(let i=0;i<12;i++) {
+    const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg'), sz=11+Math.random()*13;
+    svg.setAttribute('viewBox','0 0 18 18'); svg.setAttribute('width',sz); svg.setAttribute('height',sz);
+    svg.style.cssText='position:absolute;left:'+Math.random()*100+'vw;animation-duration:'+(18+Math.random()*18)+'s;animation-delay:'+Math.random()*24+'s';
+    svg.classList.add('petal');
+    const c1=pc[Math.floor(Math.random()*pc.length)], c2=pc[Math.floor(Math.random()*pc.length)];
+    svg.innerHTML='<g transform="translate(9,9)"><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(0)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(72)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(144)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(216)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(288)" opacity="0.9"/><circle r="3" fill="'+c2+'"/><circle r="1.2" fill="#F5EDE0"/></g>';
+    bp.appendChild(svg);
+  }
+}
+
+function openGift() {
+  const scene = document.getElementById('giftScene');
+  const screen = document.getElementById('giftScreen');
+  scene.classList.add('opening');
+  setTimeout(function() { burstFlowers(); }, 350);
+  setTimeout(function() {
+    screen.classList.add('hiding');
+    setTimeout(function() {
+      screen.style.display = 'none';
+      const mc = document.getElementById('mainContent');
+      mc.style.display = 'flex';
+      setTimeout(function() { mc.classList.add('visible'); }, 50);
+    }, 600);
+  }, 700);
+}
+
+function burstFlowers() {
+  const colors = ['#A3794A','#6A331E','#5C5A37','#C4A882','#D4829A'];
+  const cx = window.innerWidth/2, cy = window.innerHeight/2;
+  for(let i=0;i<28;i++) {
+    const angle=(i/28)*360, dist=120+Math.random()*200;
+    const rad=angle*Math.PI/180, tx=Math.cos(rad)*dist, ty=Math.sin(rad)*dist;
+    const sz=14+Math.random()*20, delay=Math.random()*150;
+    const c1=colors[Math.floor(Math.random()*colors.length)], c2=colors[Math.floor(Math.random()*colors.length)];
+    const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('viewBox','0 0 18 18'); svg.setAttribute('width',sz); svg.setAttribute('height',sz);
+    svg.style.cssText='position:fixed;left:'+(cx-sz/2)+'px;top:'+(cy-sz/2)+'px;pointer-events:none;z-index:200;';
+    svg.innerHTML='<g transform="translate(9,9)"><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(0)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(72)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(144)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(216)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="'+c1+'" transform="rotate(288)"/><circle r="3" fill="'+c2+'"/><circle r="1.2" fill="#F5EDE0"/></g>';
+    document.body.appendChild(svg);
+    svg.animate([
+      {transform:'translate(0,0) rotate(0deg) scale(0.2)',opacity:1},
+      {transform:'translate('+tx+'px,'+ty+'px) rotate('+(angle*2)+'deg) scale(1)',opacity:0.9,offset:0.5},
+      {transform:'translate('+(tx*1.4)+'px,'+(ty*1.4)+'px) rotate('+(angle*3)+'deg) scale(0.5)',opacity:0}
+    ],{duration:900+Math.random()*400,delay:delay,easing:'cubic-bezier(0.2,0.8,0.4,1)',fill:'forwards'})
+    .onfinish = function() { svg.remove(); };
+  }
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(function(b,i) {
+    b.classList.toggle('active',(i===0&&tab==='experiences')||(i===1&&tab==='club'));
+  });
+  document.getElementById('tabExperiences').classList.toggle('active',tab==='experiences');
+  document.getElementById('tabClub').classList.toggle('active',tab==='club');
+  selectedPack = null;
+  document.querySelectorAll('.pack-card,.month-btn').forEach(function(c) { c.classList.remove('selected','active'); });
+  enableNext(false);
+  document.getElementById('cardPackDisplay').textContent = 'Elige un pack 🌸';
+  document.getElementById('cardPackSub').textContent = '';
+}
+
+function selectPack(el, name, price, desc) {
+  document.querySelectorAll('.pack-card').forEach(function(c) { c.classList.remove('selected'); });
+  document.querySelectorAll('.month-btn').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('customPanel').classList.remove('selected');
+  el.classList.add('selected');
+  selectedPack = {name:name, price:price, desc:desc, type:'experience'};
+  document.getElementById('cardPackDisplay').textContent = name;
+  document.getElementById('cardPackSub').textContent = desc;
+  enableNext(true);
+  generateGiftCode();
+}
+
+function toggleCustom() {
+  customOpen = !customOpen;
+  document.getElementById('customPanel').classList.toggle('open', customOpen);
+  document.getElementById('customArrow').style.transform = customOpen ? 'rotate(90deg)' : 'rotate(0)';
+}
+
+function setCustomAmount(amount, btn) {
+  document.querySelectorAll('.custom-amt-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('customAmountInput').value = '';
+  selectedPack = {name:'A tu medida', price:amount, desc:'Tarjeta regalo por $'+amount.toLocaleString('es-MX')+' MXN', type:'custom'};
+  document.getElementById('cardPackDisplay').textContent = 'A tu medida ✦';
+  document.getElementById('cardPackSub').textContent = 'Tarjeta regalo por $'+amount.toLocaleString('es-MX')+' MXN';
+  document.getElementById('customPanel').classList.add('selected');
+  document.querySelectorAll('.pack-card').forEach(function(c) { c.classList.remove('selected'); });
+  enableNext(true);
+  generateGiftCode();
+}
+
+function setCustomAmountFree(val) {
+  if(val && !isNaN(val) && Number(val) >= 100) {
+    document.querySelectorAll('.custom-amt-btn').forEach(function(b) { b.classList.remove('active'); });
+    const amount = Number(val);
+    selectedPack = {name:'A tu medida', price:amount, desc:'Tarjeta regalo por $'+amount.toLocaleString('es-MX')+' MXN', type:'custom'};
+    document.getElementById('cardPackDisplay').textContent = 'A tu medida ✦';
+    document.getElementById('cardPackSub').textContent = 'Tarjeta regalo por $'+amount.toLocaleString('es-MX')+' MXN';
+    document.getElementById('customPanel').classList.add('selected');
+    document.querySelectorAll('.pack-card').forEach(function(c) { c.classList.remove('selected'); });
+    enableNext(true);
+    generateGiftCode();
+  }
+}
+
+const clubBenefits = {
+  1: {title:'Cada mes recibes', text:'1 Pedicure Spa + 2 Manicure Gel Clasico + 1 Facial Profundo. Valor real: $1,750/mes'},
+  3: {title:'Regalo a los 3 meses', text:'Todo lo mensual + Masaje Relajante de regalo (valor $600). Valor real acumulado: $5,250+'},
+  6: {title:'Regalo a los 6 meses', text:'Todo lo mensual + Lash Lifting + Diseno de Cejas de regalo. Valor real acumulado: $10,500+'},
+  12: {title:'Regalo a los 12 meses', text:'Todo lo mensual + Keratina + 1 mes de membresia gratis. Valor real acumulado: $21,000+'}
+};
+
+function selectMonths(el, months, price, gift) {
+  document.querySelectorAll('.month-btn').forEach(function(c) { c.classList.remove('active'); });
+  document.querySelectorAll('.pack-card').forEach(function(c) { c.classList.remove('selected'); });
+  document.getElementById('customPanel').classList.remove('selected');
+  el.classList.add('active');
+  const name = months===1 ? 'Manova Club · 1 mes' : 'Manova Club · '+months+' meses';
+  selectedPack = {name:name, price:price, desc:months+' '+(months===1?'mes':'meses')+' de membresia Manova Club'+(gift?' · '+gift:''), type:'club', months:months};
+  document.getElementById('cardPackDisplay').textContent = name;
+  document.getElementById('cardPackSub').textContent = 'Manova Club · cada mes: Pedicure Spa + 2 Manicure + Facial Profundo';
+  enableNext(true);
+  generateGiftCode();
+  const b = clubBenefits[months];
+  document.getElementById('cbTitle').textContent = b.title;
+  document.getElementById('cbText').textContent = b.text;
+  document.getElementById('clubBenefit').classList.add('show');
+}
+
+function enableNext(on) {
+  const btn = document.getElementById('btnNext1');
+  btn.style.opacity = on ? '1' : '0.4';
+  btn.style.pointerEvents = on ? 'auto' : 'none';
+}
+
+function goToStep(step) {
+  document.getElementById('stepPacks').style.display = step===1?'block':'none';
+  document.getElementById('stepForm').style.display = step===2?'block':'none';
+  document.getElementById('stepPayment').style.display = step===3?'block':'none';
+  document.getElementById('stepCard').style.display = step===4?'block':'none';
+  for(let i=1;i<=3;i++) document.getElementById('ps'+i).classList.toggle('done', i<=step);
+  if(step===3) updateOrderSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateAndPay() {
+  const buyerName = document.getElementById('fBuyerName').value.trim();
+  const buyerPhone = document.getElementById('fBuyerPhone').value.trim();
+  const buyerEmail = document.getElementById('fBuyerEmail').value.trim();
+  if(!buyerName||!buyerPhone||!buyerEmail) { showToast('Llena tus datos de contacto primero 🌸'); return; }
+  const mamaNombre = document.getElementById('fName').value.trim();
+  if(!mamaNombre) { showToast('Escribe el nombre de mamá 🌸'); return; }
+  const wa = document.getElementById('fWhatsApp').value.trim();
+  const em = document.getElementById('fEmail').value.trim();
+  if(deliveryMethod==='both' && (!wa||!em)) { showToast('Llena WhatsApp y correo de mamá 🌸'); return; }
+  if(deliveryMethod==='whatsapp' && !wa) { showToast('Llena el WhatsApp de mamá 🌸'); return; }
+  if(deliveryMethod==='email' && !em) { showToast('Llena el correo de mamá 🌸'); return; }
+  goToStep(3);
+}
+
+function liveUpdate() {
+  const name = document.getElementById('fName').value.trim();
+  const from = document.getElementById('fFrom').value.trim();
+  const msg = document.getElementById('fMsg').value.trim();
+  document.getElementById('displayName').textContent = name || 'Tu mamá 🌸';
+  document.getElementById('displayFrom').textContent = from || 'Con amor';
+  document.getElementById('displayMessage').textContent = msg || 'Con todo el carino del mundo. 🌸';
+}
+
+function setDelivery(method) {
+  deliveryMethod = method;
+  ['Both','WhatsApp','Email','Self'].forEach(function(m) {
+    const el = document.getElementById('d'+m);
+    if(el) el.classList.toggle('active', m.toLowerCase()===method);
+  });
+  const wf = document.getElementById('whatsappField');
+  const ef = document.getElementById('emailField');
+  const sf = document.getElementById('selfField');
+  if(wf) wf.style.display = (method==='both'||method==='whatsapp') ? 'flex' : 'none';
+  if(ef) ef.style.display = (method==='both'||method==='email') ? 'flex' : 'none';
+  if(sf) sf.style.display = method==='self' ? 'flex' : 'none';
+}
+
+function setSchedule(method) {
+  scheduleMethod = method;
+  document.getElementById('sNow').classList.toggle('active', method==='now');
+  document.getElementById('sMay10').classList.toggle('active', method==='may10');
+  document.getElementById('scheduleDatetime').classList.toggle('show', method==='may10');
+}
+
+function updateOrderSummary() {
+  if(!selectedPack) return;
+  document.getElementById('osPack').textContent = selectedPack.name;
+  const name = document.getElementById('fName').value.trim() || '—';
+  const sched = scheduleMethod==='now' ? 'Envío inmediato' : 'Envío 10 mayo';
+  const wa = document.getElementById('fWhatsApp').value.trim() || '';
+  const em = document.getElementById('fEmail').value.trim() || '';
+  document.getElementById('osDetail').textContent = 'Para: '+name+' · '+sched;
+  document.getElementById('osPrice').textContent = '$'+selectedPack.price.toLocaleString('es-MX')+' MXN';
+}
+
+async function redirectToMP() {
+  if(!selectedPack) { showToast('Elige una opción primero'); return; }
+  const btn = document.getElementById('mpPayBtn');
+  btn.textContent = 'Creando orden...';
+  btn.disabled = true;
+  try {
+    const name = document.getElementById('fName').value.trim() || 'Regalo';
+    const from = document.getElementById('fFrom').value.trim() || 'Anonimo';
+    const sched = scheduleMethod==='now' ? 'Envío inmediato' : 'Envío el 10 de mayo a las '+(document.getElementById('scheduleHour').value||'10:00');
+    const waContact = document.getElementById('fWhatsApp').value.trim() || '';
+    const emContact = document.getElementById('fEmail').value.trim() || '';
+    const buyerName = document.getElementById('fBuyerName').value.trim() || '';
+    const buyerPhone = document.getElementById('fBuyerPhone').value.trim() || '';
+    const buyerEmail = document.getElementById('fBuyerEmail').value.trim() || '';
+    const resp = await fetch('/api/create-preference', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        packName: selectedPack.name,
+        price: selectedPack.price,
+        recipientName: name,
+        senderName: from,
+        scheduleInfo: sched,
+        giftCode: giftCode,
+        siteUrl: window.location.origin + window.location.pathname
+      })
+    });
+    if(!resp.ok) throw new Error(await resp.text());
+    const pref = await resp.json();
+    sessionStorage.setItem('manova_order', JSON.stringify({
+      giftCode:giftCode, packName:selectedPack.name, packDesc:selectedPack.desc||'', price:selectedPack.price,
+      packType:selectedPack.type||'experience', recipientName:name, senderName:from,
+      message:document.getElementById('fMsg').value.trim(),
+      deliveryMethod:deliveryMethod, whatsappContact:waContact, emailContact:emContact,
+      buyerName:buyerName, buyerPhone:buyerPhone, buyerEmail:buyerEmail,
+      deliveryContact:deliveryMethod==='both'?waContact:(deliveryMethod==='whatsapp'?waContact:(deliveryMethod==='email'?emContact:'')),
+      scheduleMethod:scheduleMethod, scheduleHour:document.getElementById('scheduleHour').value||'10:00',
+      validUntil:document.getElementById('displayValidity').textContent.replace('Válida hasta','').trim()
+    }));
+    window.location.href = pref.init_point;
+  } catch(e) {
+    console.error(e);
+    btn.textContent = 'Pagar con Mercado Pago 💳';
+    btn.disabled = false;
+    showToast('Error al conectar. Verifica tu conexion 🌸');
+  }
+}
+
+function generateGiftCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  giftCode = 'MNV-';
+  for(let i=0;i<6;i++) giftCode += chars[Math.floor(Math.random()*chars.length)];
+  document.getElementById('displayCode').textContent = giftCode;
+  const exp = new Date();
+  exp.setMonth(exp.getMonth()+6);
+  document.getElementById('displayValidity').innerHTML = 'Válida hasta<br>'+exp.toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+}
+
+window.addEventListener('load', async function() {
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('paid')==='1') {
+    document.getElementById('giftScreen').style.display = 'none';
+    const mc = document.getElementById('mainContent');
+    mc.style.display = 'flex';
+    mc.classList.add('visible');
+    const code = params.get('code');
+    if(code) { giftCode = code; document.getElementById('displayCode').textContent = code; }
+    const saved = sessionStorage.getItem('manova_order');
+    if(saved) {
+      const order = JSON.parse(saved);
+      document.getElementById('displayName').textContent = order.recipientName || '—';
+      document.getElementById('displayFrom').textContent = order.senderName || '—';
+      document.getElementById('displayMessage').textContent = order.message || 'Con todo el carino del mundo. 🌸';
+      document.getElementById('cardPackDisplay').textContent = order.packName || '—';
+      document.getElementById('cardPackSub').textContent = order.packDesc || '';
+      selectedPack = {name:order.packName, price:order.price, type:order.packType};
+      deliveryMethod = order.deliveryMethod || 'both';
+      scheduleMethod = order.scheduleMethod || 'now';
+      try {
+        const res = await fetch('/api/send-gift', {
+          method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(order)
+        });
+        const data = await res.json();
+        if(data.whatsappUrl) setTimeout(function() { window.open(data.whatsappUrl,'_blank'); }, 2000);
+        document.getElementById('successSub').textContent = order.scheduleMethod==='now' ? 'La tarjeta fue enviada a mamá 💌' : 'Se enviará el 10 de mayo 🌸';
+      } catch(e) { console.error(e); }
+      sessionStorage.removeItem('manova_order');
+    }
+    goToStep(4);
+    burstFlowers();
+  }
+});
+
+function toggleCard() {
+  flipped = !flipped;
+  document.getElementById('cardFlipper').classList.toggle('flipped', flipped);
+}
+
+async function downloadCard() {
+  const flipRow = document.querySelector('.flip-row');
+  if(flipped) toggleCard();
+  if(flipRow) flipRow.style.visibility = 'hidden';
+  await new Promise(function(r) { setTimeout(r, 400); });
+  showToast('Preparando tarjeta...');
+  try {
+    if(typeof html2canvas === 'undefined') {
+      await new Promise(function(res,rej) {
+        const s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      });
+    }
+    const frontEl = document.getElementById('cardFront');
+    const W = frontEl.offsetWidth, H = frontEl.offsetHeight, S = 3;
+    const frontCanvas = await html2canvas(frontEl, {
+      scale:S, useCORS:true, allowTaint:true, backgroundColor:'#EDE8DC',
+      logging:false, imageTimeout:0, width:W, height:H,
+      onclone:function(doc) {
+        const fr = doc.querySelector('.flip-row');
+        if(fr) fr.style.display = 'none';
+        doc.body.style.background = 'transparent';
+      }
+    });
+    if(flipRow) flipRow.style.visibility = 'visible';
+    const code = document.getElementById('displayCode').textContent || '';
+    const validity = document.getElementById('displayValidity').textContent.replace('Válida hasta','').trim() || '';
+    const stripH = 48*S, padH = 20*S;
+    const combined = document.createElement('canvas');
+    combined.width = frontCanvas.width + padH*2;
+    combined.height = frontCanvas.height + stripH + padH*2;
+    const ctx = combined.getContext('2d');
+    ctx.fillStyle = '#F5EDE0';
+    ctx.fillRect(0,0,combined.width,combined.height);
+    ctx.drawImage(frontCanvas, padH, padH);
+    ctx.fillStyle = 'rgba(106,51,30,0.45)';
+    ctx.font = (7*S)+'px Questrial,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('CODIGO', padH+6*S, frontCanvas.height+padH+14*S);
+    ctx.fillStyle = '#6A331E';
+    ctx.font = '600 '+(11*S)+'px Noto Serif,Georgia,serif';
+    ctx.fillText(code, padH+6*S, frontCanvas.height+padH+32*S);
+    ctx.fillStyle = 'rgba(106,51,30,0.45)';
+    ctx.font = (7*S)+'px Questrial,sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('VALIDA HASTA', combined.width-padH-6*S, frontCanvas.height+padH+14*S);
+    ctx.fillStyle = '#6A331E';
+    ctx.font = (9*S)+'px Questrial,sans-serif';
+    ctx.fillText(validity, combined.width-padH-6*S, frontCanvas.height+padH+32*S);
+    const a = document.createElement('a');
+    a.download = 'manova-tarjeta-regalo.png';
+    a.href = combined.toDataURL('image/png',1.0);
+    a.click();
+    showToast('Lista para compartir! 🌸');
+  } catch(e) {
+    if(flipRow) flipRow.style.visibility = 'visible';
+    console.error(e);
+    showToast('Usa Ctrl+P para guardar');
+  }
+}
+
+function shareCard() {
+  const delivery = document.getElementById('fWhatsApp').value.trim() || document.getElementById('fEmail').value.trim();
+  if(deliveryMethod==='whatsapp' || deliveryMethod==='both') {
+    const phone = (document.getElementById('fWhatsApp').value.trim()).replace(/\D/g,'');
+    if(phone) {
+      const isClub = selectedPack && selectedPack.type==='club';
+      const packNm = selectedPack ? selectedPack.name : '';
+      const clubMsg = 'Feliz Día de las Madres! Te regale ' + packNm + ' en Manova Beauty Center. Código: ' + giftCode + '. Llama al 990 103 7352';
+      const expMsg = 'Feliz Día de las Madres! Te regale una experiencia en Manova. Pack: ' + packNm + '. Código: ' + giftCode;
+      const msg = encodeURIComponent(isClub ? clubMsg : expMsg);
+      window.open('https://wa.me/'+phone+'?text='+msg,'_blank');
+      return;
+    }
+  }
+  downloadCard();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>

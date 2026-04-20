@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tu regalo especial 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Questrial&family=Noto+Serif:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --espresso: #6A331E; --offwhite: #E7E4DB; --black: #040015;
+  --latte: #A3794A; --olive: #5C5A37; --bg: #F5EDE0;
+}
+body {
+  background: var(--bg); font-family: 'Questrial', sans-serif;
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 1.5rem 1rem 3rem; overflow-x: hidden;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background: radial-gradient(ellipse 60% 40% at 90% 5%, rgba(163,121,74,0.15) 0%, transparent 65%),
+              radial-gradient(ellipse 50% 50% at 5% 90%, rgba(106,51,30,0.09) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+.bg-petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.petal { position: absolute; opacity: 0; animation: floatPetal linear infinite; }
+@keyframes floatPetal {
+  0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+  8% { opacity: 0.5; } 92% { opacity: 0.25; }
+  100% { transform: translateY(-10vh) rotate(400deg); opacity: 0; }
+}
+
+/* INTRO REGALO */
+#giftScreen {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--bg); transition: opacity 0.6s ease;
+}
+#giftScreen.hiding { opacity: 0; pointer-events: none; }
+.gift-from {
+  position: absolute; top: 2rem; text-align: center;
+  font-family: 'Noto Serif', serif; font-style: italic;
+  font-size: 1rem; color: var(--espresso); opacity: 0.6; letter-spacing: 0.06em;
+  padding: 0 1rem;
+}
+.gift-to {
+  position: absolute; top: 4.5rem; text-align: center;
+  font-family: 'Noto Serif', serif;
+  font-size: 1.5rem; font-weight: 300; color: var(--espresso);
+  padding: 0 1rem;
+}
+.gift-scene { position: relative; width: 200px; height: 200px; cursor: pointer; user-select: none; }
+.gift-lid { position: absolute; top: 0; left: -8px; width: 216px; height: 52px; background: linear-gradient(135deg, var(--espresso) 0%, #8B4422 100%); border-radius: 10px 10px 4px 4px; box-shadow: 0 4px 16px rgba(106,51,30,0.35); transform-origin: center top; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); z-index: 3; }
+.gift-scene.opening .gift-lid { transform: rotateX(-110deg) translateY(-20px); }
+.gift-body { position: absolute; bottom: 0; left: 0; width: 200px; height: 160px; background: linear-gradient(135deg, #A3794A 0%, #8B6040 100%); border-radius: 6px 6px 12px 12px; box-shadow: 0 8px 24px rgba(106,51,30,0.3); overflow: hidden; z-index: 1; }
+.gift-body::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%); }
+.gift-body::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 22px; margin-left: -11px; background: var(--espresso); opacity: 0.5; }
+.gift-lid::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 22px; margin-top: -11px; background: rgba(255,255,255,0.18); }
+.gift-lid::after { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 22px; margin-left: -11px; background: rgba(255,255,255,0.18); }
+.gift-bow { position: absolute; top: -38px; left: 50%; transform: translateX(-50%); z-index: 4; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease; }
+.gift-scene.opening .gift-bow { transform: translateX(-50%) translateY(-60px) scale(0.5); opacity: 0; }
+.ribbon-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 22px; margin-left: -11px; background: var(--espresso); opacity: 0.45; z-index: 2; }
+.gift-hint { margin-top: 2rem; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--espresso); opacity: 0.55; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+
+/* CONTENIDO */
+.main-content {
+  width: 100%; max-width: 460px;
+  display: none; flex-direction: column; align-items: center;
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+  position: relative; z-index: 1;
+}
+.main-content.visible { opacity: 1; transform: translateY(0); display: flex; }
+
+.greeting {
+  text-align: center; margin-bottom: 1.5rem; width: 100%;
+}
+.greeting .from-msg {
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--latte); margin-bottom: 0.4rem;
+}
+.greeting .to-name {
+  font-family: 'Noto Serif', serif; font-style: italic;
+  font-size: 2rem; font-weight: 300; color: var(--espresso);
+}
+
+/* TARJETA */
+.card-wrapper { position: relative; width: 100%; cursor: pointer; margin-bottom: 1.2rem; }
+.card-flipper { position: relative; width: 100%; transform-style: preserve-3d; transition: transform 0.7s cubic-bezier(0.45,0,0.55,1); perspective: 1200px; }
+.card-flipper.flipped { transform: rotateY(180deg); }
+.card-face { width: 100%; border-radius: 22px; backface-visibility: hidden; -webkit-backface-visibility: hidden; -webkit-transform: translateZ(0); }
+.card-front {
+  position: relative; background: linear-gradient(148deg, var(--offwhite) 0%, #EDE8DC 58%, #E0D9CC 100%);
+  padding: 2rem 1.8rem 1.8rem; overflow: hidden;
+  box-shadow: 0 20px 48px rgba(106,51,30,0.17), 0 5px 16px rgba(106,51,30,0.09), inset 0 1px 0 rgba(255,255,255,0.75);
+}
+.card-front::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(163,121,74,0.11) 0%, transparent 65%); }
+.card-front::after { content: ''; position: absolute; bottom: -40px; left: -40px; width: 170px; height: 170px; border-radius: 50%; background: radial-gradient(circle, rgba(106,51,30,0.07) 0%, transparent 60%); }
+.flowers-tr { position: absolute; top: 0; right: 0; pointer-events: none; }
+.flowers-bl { position: absolute; bottom: 0; left: 0; pointer-events: none; }
+.front-logo { position: relative; z-index: 2; margin-bottom: 0.3rem; }
+.front-logo img { height: 38px; width: auto; }
+.mothers-badge { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(106,51,30,0.07); border: 1px solid rgba(106,51,30,0.16); border-radius: 30px; padding: 0.22rem 0.7rem; margin-bottom: 1.1rem; margin-top: 0.4rem; }
+.badge-text { font-size: 0.53rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--espresso); }
+.heart { font-size: 0.6rem; color: var(--espresso); animation: hb 1.6s ease-in-out infinite; }
+@keyframes hb { 0%,100%{transform:scale(1)} 30%{transform:scale(1.3)} 60%{transform:scale(1.1)} }
+.pack-section { position: relative; z-index: 2; margin-bottom: 1.1rem; }
+.pack-label { font-size: 0.5rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--latte); margin-bottom: 0.15rem; }
+.pack-name { font-family: 'Noto Serif', serif; font-weight: 300; font-size: 1.5rem; color: var(--espresso); font-style: italic; }
+.pack-sub { font-size: 0.65rem; color: var(--latte); margin-top: 0.2rem; line-height: 1.4; }
+.divider { position: relative; z-index: 2; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.1rem; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(106,51,30,0.18), transparent); }
+.recipient-row { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-end; }
+.for-lbl { font-size: 0.48rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--latte); margin-bottom: 0.15rem; }
+.for-name { font-family: 'Noto Serif', serif; font-style: italic; font-size: 1.2rem; font-weight: 300; color: var(--espresso); }
+.flip-row { position: relative; z-index: 2; display: flex; justify-content: flex-end; margin-top: 0.8rem; }
+.flip-hint { font-size: 0.48rem; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(106,51,30,0.38); display: flex; align-items: center; gap: 0.28rem; user-select: none; }
+.flip-arrow { animation: nudge 2s ease-in-out infinite; display: inline-block; }
+@keyframes nudge { 0%,100%{transform:translateX(0)} 50%{transform:translateX(4px)} }
+
+.card-back {
+  position: absolute; inset: 0; transform: rotateY(180deg);
+  background: linear-gradient(148deg, #FAF8F3 0%, var(--offwhite) 100%);
+  padding: 1.8rem 1.8rem 1.6rem; border: 1px solid rgba(163,121,74,0.18);
+  box-shadow: 0 20px 48px rgba(106,51,30,0.13);
+  overflow: hidden; display: flex; flex-direction: column; gap: 1rem;
+}
+.card-back::before { content: ''; position: absolute; top: -50px; right: -50px; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(163,121,74,0.08) 0%, transparent 65%); pointer-events: none; }
+.back-header { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+.back-logo { height: 24px; width: auto; opacity: 0.5; }
+.back-flip-hint { font-size: 0.48rem; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(106,51,30,0.38); display: flex; align-items: center; gap: 0.28rem; user-select: none; cursor: pointer; }
+.back-message { position: relative; z-index: 1; }
+.back-msg-lbl { font-size: 0.48rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--espresso); opacity: 0.6; margin-bottom: 0.35rem; }
+.back-msg-text { font-family: 'Noto Serif', serif; font-style: italic; font-size: 0.92rem; line-height: 1.72; color: var(--black); padding: 0.6rem 0.8rem; border-left: 2px solid var(--latte); background: rgba(255,255,255,0.58); border-radius: 0 8px 8px 0; }
+.back-code-block { background: white; border-radius: 12px; border: 1px solid rgba(163,121,74,0.2); padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+.code-lbl { font-size: 0.48rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--espresso); opacity: 0.6; margin-bottom: 0.15rem; }
+.code-val { font-family: 'Noto Serif', serif; font-size: 1.2rem; font-weight: 600; color: var(--black); letter-spacing: 0.08em; }
+.validity { font-size: 0.5rem; color: var(--espresso); opacity: 0.55; text-align: right; line-height: 1.5; }
+.back-footer { font-size: 0.5rem; color: var(--black); opacity: 0.3; text-align: center; line-height: 1.7; letter-spacing: 0.06em; position: relative; z-index: 1; }
+
+/* CTA */
+.cta-box {
+  width: 100%; background: white; border-radius: 16px;
+  border: 1px solid rgba(163,121,74,0.2); padding: 1.2rem 1.4rem;
+  text-align: center;
+}
+.cta-box p { font-size: 0.78rem; color: var(--espresso); margin-bottom: 0.8rem; line-height: 1.5; }
+.cta-btn {
+  display: block; width: 100%;
+  background: var(--espresso); color: var(--offwhite);
+  border: none; border-radius: 10px; padding: 0.85rem;
+  font-family: 'Questrial', sans-serif; font-size: 0.72rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer; margin-bottom: 0.6rem;
+}
+.cta-btn-sec {
+  display: block; width: 100%;
+  background: transparent; color: var(--espresso);
+  border: 1px solid rgba(106,51,30,0.25); border-radius: 10px; padding: 0.78rem;
+  font-family: 'Questrial', sans-serif; font-size: 0.67rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  text-decoration: none; cursor: pointer;
+}
+
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--espresso); color: var(--offwhite); padding: 0.68rem 1.6rem; border-radius: 30px; font-size: 0.65rem; letter-spacing: 0.12em; opacity: 0; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); z-index: 999; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.back-msg-text, .for-name {
+  font-family: 'Noto Serif', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', serif;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+</style>
+</head>
+<body>
+<div class="bg-petals" id="petals"></div>
+
+<!-- INTRO REGALO -->
+<div id="giftScreen">
+  <div class="gift-from" id="giftFrom">Tienes un regalo especial 🌸</div>
+  <div class="gift-to" id="giftTo"></div>
+
+  <div class="gift-scene" id="giftScene" onclick="openGift()">
+    <div class="gift-bow">
+      <svg width="100" height="60" viewBox="0 0 100 60" fill="none">
+        <path d="M50,30 C40,10 10,5 8,20 C6,35 35,38 50,30Z" fill="#6A331E" opacity="0.9"/>
+        <path d="M50,30 C60,10 90,5 92,20 C94,35 65,38 50,30Z" fill="#6A331E" opacity="0.9"/>
+        <ellipse cx="50" cy="30" rx="9" ry="8" fill="#8B4422"/>
+        <ellipse cx="50" cy="30" rx="5" ry="4.5" fill="#A3794A"/>
+        <path d="M44,34 Q38,46 35,55" stroke="#6A331E" stroke-width="6" stroke-linecap="round" fill="none"/>
+        <path d="M56,34 Q62,46 65,55" stroke="#6A331E" stroke-width="6" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="gift-lid"></div>
+    <div class="gift-body"><div class="ribbon-v"></div></div>
+  </div>
+  <div class="gift-hint">Toca para abrir tu regalo ✦</div>
+</div>
+
+<!-- CONTENIDO MAMA -->
+<div class="main-content" id="mainContent">
+
+  <div class="greeting">
+    <div class="from-msg" id="fromMsg">Un regalo de</div>
+    <div class="to-name" id="toName">Para ti 🌸</div>
+  </div>
+
+  <div class="card-wrapper" onclick="toggleCard()">
+    <div class="card-flipper" id="cardFlipper">
+      <!-- FRENTE -->
+      <div class="card-face card-front">
+        <svg class="flowers-tr" width="150" height="150" viewBox="0 0 155 155" fill="none" style="opacity:0.22">
+          <g transform="translate(95,55)"><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-16" rx="9" ry="16" fill="#A3794A" transform="rotate(288)"/><circle r="7" fill="#6A331E"/><circle r="3" fill="#C9A96E"/></g>
+          <g transform="translate(42,28)"><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(0)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(72)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(144)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(216)"/><ellipse cx="0" cy="-10" rx="5.5" ry="10" fill="#5C5A37" transform="rotate(288)"/><circle r="4.5" fill="#A3794A"/><circle r="2" fill="#E7E4DB"/></g>
+          <path d="M95,71 Q85,100 80,130" stroke="#5C5A37" stroke-width="1.5" fill="none"/>
+          <path d="M42,38 Q55,60 70,80" stroke="#5C5A37" stroke-width="1" fill="none"/>
+          <ellipse cx="83" cy="105" rx="5" ry="11" fill="#5C5A37" transform="rotate(-35 83 105)" opacity="0.65"/>
+        </svg>
+        <svg class="flowers-bl" width="110" height="110" viewBox="0 0 115 115" fill="none" style="opacity:0.15">
+          <g transform="translate(55,65)"><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-14" rx="8" ry="14" fill="#A3794A" transform="rotate(288)"/><circle r="6" fill="#6A331E"/><circle r="2.5" fill="#C9A96E"/></g>
+          <path d="M55,79 Q45,92 38,112" stroke="#5C5A37" stroke-width="1.3" fill="none"/>
+          <ellipse cx="47" cy="95" rx="4" ry="9" fill="#5C5A37" transform="rotate(-20 47 95)" opacity="0.6"/>
+        </svg>
+        <div class="front-logo"><img src="/logo.png" alt="Manova Beauty Center"></div>
+        <div class="mothers-badge"><span class="heart">♡</span><span class="badge-text">Dia de las Madres · 2025</span><span class="heart">♡</span></div>
+        <div class="pack-section">
+          <div class="pack-label">Tu regalo</div>
+          <div class="pack-name" id="cardPackName">—</div>
+          <div class="pack-sub" id="cardPackSub"></div>
+        </div>
+        <div class="divider">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none" style="flex-shrink:0"><g transform="translate(9,9)"><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="#A3794A" transform="rotate(288)"/><circle r="3" fill="#6A331E"/><circle r="1.2" fill="#C9A96E"/></g></svg>
+        </div>
+        <div class="recipient-row">
+          <div><div class="for-lbl">Para</div><div class="for-name" id="cardRecipient">—</div></div>
+          <div style="text-align:right"><div class="for-lbl" style="text-align:right">De parte de</div><div class="for-name" id="cardSender" style="font-size:1rem;color:var(--latte)">—</div></div>
+        </div>
+        <div class="flip-row"><div class="flip-hint"><span>Ver reverso</span><span class="flip-arrow">›</span></div></div>
+      </div>
+
+      <!-- REVERSO -->
+      <div class="card-face card-back">
+        <svg style="position:absolute;top:0;right:0;width:80px;height:80px;opacity:0.13;pointer-events:none" viewBox="0 0 90 90" fill="none"><g transform="translate(62,32)"><ellipse cx="0" cy="-11" rx="6" ry="11" fill="#A3794A" transform="rotate(0)"/><ellipse cx="0" cy="-11" rx="6" ry="11" fill="#A3794A" transform="rotate(72)"/><ellipse cx="0" cy="-11" rx="6" ry="11" fill="#A3794A" transform="rotate(144)"/><ellipse cx="0" cy="-11" rx="6" ry="11" fill="#A3794A" transform="rotate(216)"/><ellipse cx="0" cy="-11" rx="6" ry="11" fill="#A3794A" transform="rotate(288)"/><circle r="5" fill="#6A331E"/></g></svg>
+        <div class="back-header">
+          <img class="back-logo" src="/logo.png" alt="Manova">
+          <div class="back-flip-hint" onclick="event.stopPropagation();toggleCard()"><span style="display:inline-block;transform:scaleX(-1)">›</span><span>Ver frente</span></div>
+        </div>
+        <div class="back-message">
+          <div class="back-msg-lbl">Mensaje especial</div>
+          <div class="back-msg-text" id="cardMessage">Con todo el carino del mundo. 🌸</div>
+        </div>
+        <div class="back-code-block">
+          <div><div class="code-lbl">Tu codigo</div><div class="code-val" id="cardCode">—</div></div>
+          <div class="validity" id="cardValidity">Valida hasta<br>—</div>
+        </div>
+        <div class="back-footer">Canjeable en Manova Beauty Center · Merida, Yucatan<br>No reembolsable · No transferible</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA agendar -->
+  <div class="cta-box">
+    <p>Para agendar tu cita solo escribe o llama a Manova Beauty Center 🌸</p>
+    <a href="https://wa.me/529901037352?text=Hola!%20Quiero%20agendar%20mi%20cita%20con%20mi%20tarjeta%20regalo" class="cta-btn">Agendar mi cita por WhatsApp</a>
+    <button class="cta-btn-sec" onclick="downloadCard()">⬇ Descargar mi tarjeta</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let flipped = false;
+let giftData = {};
+
+// iOS perspective fix
+// perspective set via CSS to avoid white border in screenshots
+
+// Parse gift data from URL
+function parseGiftData() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('t');
+    if(!token) return {};
+    const decoded = JSON.parse(atob(decodeURIComponent(token)));
+    return decoded;
+  } catch(e) {
+    console.error('Error parsing gift data:', e);
+    return {};
+  }
+}
+
+// Initialize
+window.addEventListener('load', () => {
+  giftData = parseGiftData();
+
+  // Set intro text
+  if(giftData.senderName) {
+    document.getElementById('giftFrom').textContent = giftData.senderName + ' tiene un regalo para ti 🌸';
+    document.getElementById('fromMsg').textContent = 'Un regalo de ' + giftData.senderName;
+  }
+  if(giftData.recipientName) {
+    document.getElementById('giftTo').textContent = giftData.recipientName;
+    document.getElementById('toName').textContent = giftData.recipientName + ' 🌸';
+  }
+
+  // Fill card data
+  document.getElementById('cardPackName').textContent = giftData.packName || '—';
+  document.getElementById('cardPackSub').textContent = giftData.packDesc || '';
+  document.getElementById('cardRecipient').textContent = giftData.recipientName || '—';
+  document.getElementById('cardSender').textContent = giftData.senderName || '—';
+  document.getElementById('cardMessage').textContent = giftData.message || 'Con todo el carino del mundo. 🌸';
+  document.getElementById('cardCode').textContent = giftData.giftCode || '—';
+  document.getElementById('cardValidity').innerHTML = 'Valida hasta<br>' + (giftData.validUntil || '—');
+});
+
+// Petals
+const bp = document.getElementById('petals');
+const pc = ['#A3794A','#6A331E','#5C5A37','#C4A882','#8B5E3C'];
+for(let i=0;i<12;i++) {
+  const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg'), sz=11+Math.random()*13;
+  svg.setAttribute('viewBox','0 0 18 18'); svg.setAttribute('width',sz); svg.setAttribute('height',sz);
+  svg.style.cssText=`position:absolute;left:${Math.random()*100}vw;animation-duration:${18+Math.random()*18}s;animation-delay:${Math.random()*24}s`;
+  svg.classList.add('petal');
+  const c1=pc[Math.floor(Math.random()*pc.length)],c2=pc[Math.floor(Math.random()*pc.length)];
+  svg.innerHTML=`<g transform="translate(9,9)"><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(0)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(72)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(144)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(216)" opacity="0.9"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(288)" opacity="0.9"/><circle r="3" fill="${c2}"/><circle r="1.2" fill="#F5EDE0"/></g>`;
+  bp.appendChild(svg);
+}
+
+function openGift() {
+  const scene=document.getElementById('giftScene'), screen=document.getElementById('giftScreen');
+  scene.classList.add('opening');
+  setTimeout(()=>burstFlowers(), 350);
+  setTimeout(()=>{
+    screen.classList.add('hiding');
+    setTimeout(()=>{
+      screen.style.display='none';
+      const mc=document.getElementById('mainContent');
+      mc.style.display='flex';
+      setTimeout(()=>mc.classList.add('visible'), 50);
+    }, 600);
+  }, 700);
+}
+
+function burstFlowers() {
+  const colors=['#A3794A','#6A331E','#5C5A37','#C4A882','#D4829A'];
+  const cx=window.innerWidth/2, cy=window.innerHeight/2;
+  for(let i=0;i<28;i++) {
+    const angle=(i/28)*360, dist=120+Math.random()*200;
+    const rad=angle*Math.PI/180, tx=Math.cos(rad)*dist, ty=Math.sin(rad)*dist;
+    const sz=14+Math.random()*20, delay=Math.random()*150;
+    const c1=colors[Math.floor(Math.random()*colors.length)], c2=colors[Math.floor(Math.random()*colors.length)];
+    const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('viewBox','0 0 18 18'); svg.setAttribute('width',sz); svg.setAttribute('height',sz);
+    svg.style.cssText=`position:fixed;left:${cx-sz/2}px;top:${cy-sz/2}px;pointer-events:none;z-index:200;`;
+    svg.innerHTML=`<g transform="translate(9,9)"><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(0)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(72)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(144)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(216)"/><ellipse cx="0" cy="-5.5" rx="3" ry="5.5" fill="${c1}" transform="rotate(288)"/><circle r="3" fill="${c2}"/><circle r="1.2" fill="#F5EDE0"/></g>`;
+    document.body.appendChild(svg);
+    svg.animate([
+      {transform:'translate(0,0) rotate(0deg) scale(0.2)',opacity:1},
+      {transform:`translate(${tx}px,${ty}px) rotate(${angle*2}deg) scale(1)`,opacity:0.9,offset:0.5},
+      {transform:`translate(${tx*1.4}px,${ty*1.4}px) rotate(${angle*3}deg) scale(0.5)`,opacity:0}
+    ],{duration:900+Math.random()*400,delay,easing:'cubic-bezier(0.2,0.8,0.4,1)',fill:'forwards'})
+    .onfinish=()=>svg.remove();
+  }
+}
+
+function toggleCard() {
+  flipped=!flipped;
+  document.getElementById('cardFlipper').classList.toggle('flipped',flipped);
+}
+
+async function downloadCard() {
+  showToast('Preparando tu tarjeta...');
+  if(flipped) toggleCard();
+  await new Promise(r=>setTimeout(r,400));
+  try {
+    if(typeof html2canvas==='undefined') {
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      });
+    }
+
+    const frontEl = document.querySelector('.card-front');
+    const W = frontEl.offsetWidth, H = frontEl.offsetHeight, S = 3;
+
+    // Hide 'ver reverso' hint before capture
+    const flipRow = frontEl.querySelector('.flip-row');
+    if(flipRow) flipRow.style.visibility='hidden';
+
+    const frontCanvas = await html2canvas(frontEl, {
+      scale:S, useCORS:true, allowTaint:true,
+      backgroundColor:'#EDE8DC', logging:false, imageTimeout:0,
+      width:W, height:H,
+      onclone: (doc) => {
+        const fr = doc.querySelector('.flip-row');
+        if(fr) fr.style.display='none';
+        // Remove any white background from body/wrapper
+        doc.body.style.background='transparent';
+        const wrapper = doc.querySelector('.card-wrapper');
+        if(wrapper) wrapper.style.background='transparent';
+      }
+    });
+
+    // Restore flip hint
+    if(flipRow) flipRow.style.visibility='visible';
+
+    const code = document.getElementById('cardCode')?.textContent || '';
+    const validity = document.getElementById('cardValidity')?.textContent?.replace('Valida hasta','').trim() || '';
+
+    const stripH = 48*S, padH = 20*S;
+    const combined = document.createElement('canvas');
+    combined.width = frontCanvas.width + padH*2;
+    combined.height = frontCanvas.height + stripH + padH*2;
+    const ctx = combined.getContext('2d');
+
+    ctx.fillStyle = '#F5EDE0';
+    ctx.fillRect(0,0,combined.width,combined.height);
+
+    ctx.shadowColor='rgba(106,51,30,0.2)';ctx.shadowBlur=20*S;ctx.shadowOffsetY=4*S;
+    ctx.drawImage(frontCanvas, padH, padH);
+    ctx.shadowColor='transparent';
+
+    const stripY = frontCanvas.height + padH + 8*S;
+
+    ctx.fillStyle='rgba(106,51,30,0.45)';ctx.font=`${7*S}px Questrial,sans-serif`;ctx.textAlign='left';
+    ctx.fillText('CÓDIGO', padH+6*S, stripY+14*S);
+    ctx.fillStyle='#6A331E';ctx.font=`600 ${11*S}px 'Noto Serif',Georgia,serif`;
+    ctx.fillText(code, padH+6*S, stripY+32*S);
+
+    ctx.fillStyle='rgba(106,51,30,0.45)';ctx.font=`${7*S}px Questrial,sans-serif`;ctx.textAlign='right';
+    ctx.fillText('VÁLIDA HASTA', combined.width-padH-6*S, stripY+14*S);
+    ctx.fillStyle='#6A331E';ctx.font=`${9*S}px Questrial,sans-serif`;
+    ctx.fillText(validity, combined.width-padH-6*S, stripY+32*S);
+
+    const a=document.createElement('a');
+    a.download='mi-regalo-manova.png';
+    a.href=combined.toDataURL('image/png',1.0); a.click();
+    showToast('Tarjeta guardada! 🌸');
+  } catch(e){showToast('Usa Ctrl+P para guardar');}
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
