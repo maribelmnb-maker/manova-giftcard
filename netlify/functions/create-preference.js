@@ -17,7 +17,7 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    const { packName, price, recipientName, senderName, scheduleInfo, giftCode, siteUrl } = body;
+    const { packName, price, recipientName, senderName, scheduleInfo, giftCode, siteUrl, orderToken } = body;
 
     const preference = {
       items: [
@@ -30,7 +30,7 @@ exports.handler = async (event) => {
         },
       ],
       back_urls: {
-        success: `${siteUrl}?paid=1&code=${giftCode}&pack=${encodeURIComponent(packName)}&price=${price}&to=${encodeURIComponent(recipientName)}&from=${encodeURIComponent(senderName)}`,
+        success: `${siteUrl}?paid=1&code=${giftCode}`,
         failure: `${siteUrl}?paid=0`,
         pending: `${siteUrl}?paid=pending`,
       },
