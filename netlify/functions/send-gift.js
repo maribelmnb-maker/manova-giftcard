@@ -122,7 +122,7 @@ exports.handler = async (event) => {
 
     if (toEmail) {
       const payload = {
-        from: "Manova Beauty Center <onboarding@resend.dev>",
+        from: "Manova Beauty Center <regalos@manovagiftcards.com>",
         to: [toEmail],
         subject: deliveryMethod === "self" ? `Tu tarjeta regalo Manova para ${recipientName}` : `${senderName} tiene una sorpresa para ti 🎁`,
         html: emailHtml,
